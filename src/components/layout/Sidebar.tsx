@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import {
   ChevronLeft,
   CircleHelp,
@@ -12,6 +12,8 @@ import {
 } from "lucide-react"
 import { useState } from "react"
 
+import { clearCredentials } from "@/features/auth/authSlice"
+import { useAppDispatch } from "@/store/hooks"
 import { cn } from "@/utils"
 
 const navigation = [
@@ -21,7 +23,14 @@ const navigation = [
 
 export function Sidebar() {
   const pathname = usePathname()
+  const router = useRouter()
+  const dispatch = useAppDispatch()
   const [collapsed, setCollapsed] = useState(false)
+
+  function handleLogout() {
+    dispatch(clearCredentials())
+    router.replace("/login")
+  }
 
   return (
     <aside
@@ -106,17 +115,18 @@ export function Sidebar() {
           <CircleHelp className="size-5" />
           {!collapsed ? "Help & support" : null}
         </button>
-        <Link
-          href="/login"
+        <button
+          type="button"
+          onClick={handleLogout}
           title={collapsed ? "Log out" : undefined}
           className={cn(
-            "flex h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium text-muted-foreground hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/30",
+            "flex h-11 w-full items-center gap-3 rounded-xl px-3 text-sm font-medium text-muted-foreground hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/30",
             collapsed && "justify-center px-0",
           )}
         >
           <LogOut className="size-5" />
           {!collapsed ? "Log out" : null}
-        </Link>
+        </button>
       </div>
     </aside>
   )
