@@ -1,77 +1,227 @@
-# Taskflow
+# Taskflow Task Management Dashboard
 
-Taskflow is a responsive task management dashboard built with Next.js App Router and TypeScript. It includes mock authentication, persisted user state and filters, a local REST API, complete task CRUD, dashboard summaries, theme support, and accessible loading, error, empty, modal, and confirmation states.
+Taskflow is a responsive task management dashboard created for the Frontend Developer Take-Home Assignment. It demonstrates modular frontend architecture, mock authentication, persisted Redux state, RTK Query API integration, complete task CRUD, responsive layouts, reusable UI, and purposeful animation.
 
-## Installation
+## Assignment Coverage
 
-Requirements:
+| Requirement        | Implementation                                                          |
+| ------------------ | ----------------------------------------------------------------------- |
+| Authentication     | Mock login, protected dashboard routes, persisted session, and logout   |
+| Dashboard          | Live Total, Completed, Pending, and High Priority summary cards         |
+| Task management    | List, details, create, edit, and delete workflows                       |
+| Search and filters | Title search, status filter, priority filter, and due-date sorting      |
+| State management   | Redux Toolkit for auth, filters, selected task, and interface state     |
+| API integration    | RTK Query queries and mutations connected to Next.js Route Handlers     |
+| Persistence        | Authentication, task filters, selected task, and sidebar preference     |
+| Theme support      | Persisted light and dark modes using the existing local theme provider  |
+| Animations         | Framer Motion page, sidebar, modal, list, card, and progress animations |
+| Responsive UI      | Mobile navigation drawer plus tablet and desktop layouts                |
+| Feedback states    | Loading skeletons, API errors, empty states, and confirmation dialogs   |
+| Code quality       | Strict TypeScript, ESLint, Prettier, typed hooks, and modular features  |
+
+## Quick Start
+
+### Requirements
 
 - Node.js 20 or newer
 - npm 10 or newer
 
-Install dependencies and start the development server:
+### Installation
 
 ```bash
+git clone <repository-url>
+cd task-management-dashboard
 npm install
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
 
-The login is intentionally mocked. Use any valid email address and any password containing at least six characters.
+### Demo Login
+
+Authentication is intentionally mocked. Any valid email and any password containing at least six characters will work.
 
 ```text
 Email: alex@example.com
 Password: 123456
 ```
 
-Available scripts:
+After login, the session is stored by Redux Persist. Refreshing the page keeps the user authenticated until logout.
 
-```bash
-npm run dev
-npm run build
-npm run start
-npm run lint
-npm run format
-npm run format:check
-```
+## Available Commands
+
+| Command                | Purpose                                  |
+| ---------------------- | ---------------------------------------- |
+| `npm run dev`          | Start the Next.js development server     |
+| `npm run build`        | Create an optimized production build     |
+| `npm run start`        | Run the production build                 |
+| `npm run lint`         | Run ESLint checks                        |
+| `npm run format`       | Format the project with Prettier         |
+| `npm run format:check` | Verify formatting without changing files |
+| `npx tsc --noEmit`     | Run a standalone TypeScript check        |
+| `npx next typegen`     | Regenerate typed Next.js routes          |
 
 ## Environment Variables
 
-No environment variables are required. By default, RTK Query uses the included Next.js Route Handlers under `/api`.
+No environment variables are required. The default API base URL is `/api`, which uses the included Next.js Route Handlers.
 
-To use a compatible external API instead, create `.env.local`:
+To use another compatible backend, create `.env.local`:
 
 ```bash
 NEXT_PUBLIC_API_BASE_URL=https://example.com/api
 ```
 
-The external API must expose compatible `/tasks` and `/tasks/:id` endpoints.
+The external service must support the same `/tasks` and `/tasks/:id` contract documented below.
 
-## Project Structure
+## Application Routes
+
+| Route             | Access    | Description                                       |
+| ----------------- | --------- | ------------------------------------------------- |
+| `/login`          | Public    | Mock login form                                   |
+| `/`               | Protected | Dashboard summaries, progress, and upcoming tasks |
+| `/tasks`          | Protected | Searchable task list and CRUD actions             |
+| `/tasks/[id]`     | Protected | Detailed task overview and metadata               |
+| `/api/tasks`      | API       | Fetch and create tasks                            |
+| `/api/tasks/[id]` | API       | Fetch, update, and delete one task                |
+
+## Main Features
+
+### Mock Authentication
+
+- Validates email format and a minimum six-character password.
+- Creates a mock user and token in the Redux auth slice.
+- Protects dashboard routes with a client authentication guard.
+- Redirects authenticated users away from the login page.
+- Supports logout from both the sidebar and avatar popover.
+- Persists the session through browser refreshes.
+
+### Dashboard
+
+- Calculates summaries from live RTK Query task data.
+- Displays Total, Completed, Pending, and High Priority tasks.
+- Shows overall completion progress.
+- Lists the nearest open deadlines.
+- Includes loading and retry states.
+
+### Task Management
+
+- Displays responsive task cards with status, priority, due date, and actions.
+- Opens a validated form for task creation and editing.
+- Requires confirmation before deletion.
+- Provides a dedicated blue-accented detail page.
+- Synchronizes list and detail caches after mutations.
+
+### Search and Filters
+
+- Searches task titles case-insensitively.
+- Filters by task status.
+- Filters by priority.
+- Sorts due dates in ascending or descending order.
+- Resets all filters with one action.
+- Persists filter values using Redux Persist.
+
+### Theme and Responsive Behavior
+
+- Supports persisted light and dark modes.
+- Uses a collapsible desktop sidebar.
+- Uses an animated navigation drawer on mobile.
+- Adapts forms, cards, filters, navigation, and detail views across breakpoints.
+- Respects the operating system's reduced-motion preference.
+
+## Architecture
+
+The application follows a feature-oriented structure. Route files compose screens, feature folders own domain behavior, and shared components remain independent of task-specific state.
 
 ```text
 src/
-├── app/                  Next.js routes, layouts, and mock API handlers
+├── app/
+│   ├── (auth)/login/             Public login route
+│   ├── (dashboard)/              Protected application routes
+│   │   └── tasks/[id]/           Task detail route
+│   └── api/tasks/                Mock REST Route Handlers
 ├── components/
-│   ├── common/           Reusable feedback and dialog components
-│   ├── layout/           Navbar, sidebar, theme toggle, transitions
-│   └── ui/               shadcn UI primitives
+│   ├── common/                   Dialog, loading, empty, and error UI
+│   ├── layout/                   Navbar, sidebar, theme, transitions
+│   └── ui/                       shadcn UI primitives
 ├── features/
-│   ├── auth/             Authentication state and login flow
-│   ├── dashboard/        Live task summaries and progress views
-│   ├── tasks/            CRUD, filters, task cards, and RTK Query API
-│   └── ui/               Shared interface state
-├── lib/                  Providers, mock data, and validation
-├── store/                Redux store, reducer, and typed hooks
-├── types/                Domain types
-├── constants/            Shared constants
-└── utils/                Shared utilities
+│   ├── auth/                     Auth slice, login form, route guard
+│   ├── dashboard/                Summary cards and dashboard metrics
+│   ├── tasks/                    Task API, slice, forms, cards, filters
+│   └── ui/                       Shared interface state
+├── lib/
+│   ├── providers/                Redux and theme providers
+│   ├── validations/              Login and task validation
+│   └── mockTasks.ts              In-memory task repository
+├── store/                        Store, root reducer, typed hooks
+├── types/                        Auth and task domain types
+├── constants/                    Status and priority constants
+└── utils/                        Shared class-name utility
 ```
 
-## Libraries Used
+### Data Flow
 
-- Next.js 16 App Router and React 19
+```mermaid
+flowchart LR
+    UI[Pages and feature components] --> Hooks[RTK Query hooks]
+    Hooks --> API[Next.js Route Handlers]
+    API --> Data[In-memory task repository]
+    Hooks --> Cache[RTK Query cache]
+
+    UI --> Redux[Redux Toolkit store]
+    Redux --> Auth[Authentication state]
+    Redux --> Filters[Filters and selected task]
+    Redux --> Preferences[Sidebar preference]
+    Redux --> Persist[Redux Persist local storage]
+
+    Cache -. intentionally excluded .-> Persist
+```
+
+### State Ownership
+
+| State                                | Owner                         | Persisted                        |
+| ------------------------------------ | ----------------------------- | -------------------------------- |
+| Authenticated user and mock token    | `authSlice`                   | Yes                              |
+| Search, filters, sort, selected task | `tasksSlice`                  | Yes                              |
+| Sidebar and mobile navigation state  | `uiSlice`                     | Desktop preference only          |
+| Task server data and request status  | RTK Query                     | No                               |
+| Light or dark theme                  | Theme provider                | Yes, separately in local storage |
+| Task records                         | Mock Route Handler repository | No, server memory only           |
+
+The RTK Query cache is deliberately excluded from Redux Persist, matching the assignment requirement.
+
+## API Contract
+
+### Task Shape
+
+```ts
+type Task = {
+  id: string
+  title: string
+  description: string
+  status: "todo" | "in-progress" | "done"
+  priority: "low" | "medium" | "high"
+  dueDate: string
+  createdAt: string
+  updatedAt: string
+}
+```
+
+### Endpoints
+
+| Method   | Endpoint         | Behavior                      |
+| -------- | ---------------- | ----------------------------- |
+| `GET`    | `/api/tasks`     | Return all tasks              |
+| `POST`   | `/api/tasks`     | Validate and create a task    |
+| `GET`    | `/api/tasks/:id` | Return one task or `404`      |
+| `PATCH`  | `/api/tasks/:id` | Validate and update a task    |
+| `DELETE` | `/api/tasks/:id` | Delete a task or return `404` |
+
+RTK Query tag invalidation refreshes affected task lists and detail queries after create, update, or delete operations.
+
+## Technology Stack
+
+- Next.js 16 App Router
+- React 19
 - TypeScript
 - Tailwind CSS 4
 - shadcn/ui and Base UI
@@ -82,26 +232,44 @@ src/
 - Lucide React
 - ESLint and Prettier
 
-The theme implementation is intentionally local and persists the selected light or dark mode in browser storage.
+The assignment requested `next-themes`. This project keeps the pre-existing custom theme provider by explicit project decision; it provides the same light mode, dark mode, toggle, and persistence behavior without that package.
 
-## Architecture Notes
+## Validation
 
-The App Router remains server-first. Interactive areas are isolated behind client boundaries, including Redux providers, authentication guards, task workflows, filters, navigation state, and animations.
+Before submission, run:
 
-Redux Toolkit owns authentication, filter, selected-task, and UI state. Redux Persist stores authentication, filters, and the desktop sidebar preference. RTK Query owns server data and request state; its API cache is intentionally excluded from persistence.
+```bash
+npx next typegen
+npx tsc --noEmit
+npm run lint
+npm run format:check
+npm run build
+```
 
-The included Route Handlers provide `GET`, `POST`, `PATCH`, and `DELETE` endpoints. RTK Query cache tags keep task lists and detail views synchronized after mutations.
+The first four commands validate generated routes, strict TypeScript, ESLint rules, and formatting. The final command confirms the production bundle in the local environment.
+
+## Implementation Milestones
+
+The assignment work was separated into three focused commits:
+
+1. `99aebaf` Implement persisted mock authentication and protected dashboard access
+2. `fc56a17` Build complete task CRUD with RTK Query and persisted filters
+3. `da58253` Polish dashboard with responsive navigation animations and project documentation
+
+Later commits contain requested visual refinements to the task detail page and avatar popover.
 
 ## Assumptions
 
-- Authentication is deliberately mocked and accepts any valid email with a six-character password.
-- Task filtering and due-date sorting happen client-side because the included dataset is small.
-- Dates are stored as ISO date strings and displayed consistently in UTC.
-- The browser supports the modern baseline targeted by Next.js 16.
+- Mock authentication is sufficient; no real identity provider is required.
+- Client-side filtering is appropriate for the small assignment dataset.
+- ISO date strings are displayed in UTC for consistent server and client output.
+- The browser meets the modern baseline supported by Next.js 16.
+- A compatible external API returns the same task shape as the mock handlers.
 
 ## Known Limitations
 
-- Mock task data is stored in server memory and resets when the development server restarts.
-- Authentication tokens are mock values and must not be used as a production security model.
-- The notification, profile, and help controls are visual placeholders.
-- Automated unit and end-to-end tests are not included in the one-day scope.
+- Mock tasks are stored in server memory and reset when the server restarts.
+- Mock tokens provide no production security and must not be used for real authentication.
+- View Profile, notifications, and help actions are intentionally inactive placeholders.
+- The custom theme provider replaces the assignment's requested `next-themes` package.
+- Unit and end-to-end tests are outside the one-day assignment scope.
