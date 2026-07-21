@@ -9,3 +9,5 @@ export const rootReducer = combineReducers({
   tasks: tasksReducer,
   [tasksApi.reducerPath]: tasksApi.reducer,
 })
+
+export type RootReducerState = ReturnType<typeof rootReducer>
