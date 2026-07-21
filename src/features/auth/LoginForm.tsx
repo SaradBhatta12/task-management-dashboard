@@ -77,7 +77,9 @@ export function LoginForm() {
           <LockKeyhole className="size-5" />
         </span>
         <h1 className="text-2xl font-bold tracking-tight">Welcome to Taskflow</h1>
-        <p className="text-sm text-muted-foreground">Use any valid email and a 6-character password.</p>
+        <p className="text-sm text-muted-foreground">
+          Use any valid email and a 6-character password.
+        </p>
       </div>
 
       <div className="space-y-4">
@@ -99,7 +101,11 @@ export function LoginForm() {
               placeholder="alex@example.com"
             />
           </span>
-          {errors.email ? <span id="email-error" className="block text-xs text-destructive">{errors.email}</span> : null}
+          {errors.email ? (
+            <span id="email-error" className="block text-xs text-destructive">
+              {errors.email}
+            </span>
+          ) : null}
         </label>
 
         <label className="block space-y-2 text-sm font-medium">
@@ -128,11 +134,19 @@ export function LoginForm() {
               {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
             </button>
           </span>
-          {errors.password ? <span id="password-error" className="block text-xs text-destructive">{errors.password}</span> : null}
+          {errors.password ? (
+            <span id="password-error" className="block text-xs text-destructive">
+              {errors.password}
+            </span>
+          ) : null}
         </label>
       </div>
 
-      <Button className="h-11 w-full rounded-xl bg-blue-600 hover:bg-blue-700" type="submit" disabled={isSubmitting}>
+      <Button
+        className="h-11 w-full rounded-xl bg-blue-600 hover:bg-blue-700"
+        type="submit"
+        disabled={isSubmitting}
+      >
         {isSubmitting ? "Signing in…" : "Sign in"}
       </Button>
     </form>

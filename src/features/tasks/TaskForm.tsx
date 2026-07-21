@@ -1,5 +1,6 @@
 "use client"
 
+import { motion, useReducedMotion } from "framer-motion"
 import { X } from "lucide-react"
 import { useId, useState, type FormEvent } from "react"
 
@@ -30,6 +31,7 @@ export function TaskForm({
   onCancel,
 }: TaskFormProps) {
   const titleId = useId()
+  const reduceMotion = useReducedMotion()
   const [values, setValues] = useState<TaskInput>({
     title: task?.title ?? "",
     description: task?.description ?? "",
@@ -59,7 +61,12 @@ export function TaskForm({
   }
 
   return (
-    <div className="fixed inset-0 z-40 grid place-items-center overflow-y-auto bg-slate-950/40 p-4 backdrop-blur-sm">
+    <motion.div
+      initial={reduceMotion ? false : { opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-40 grid place-items-center overflow-y-auto bg-slate-950/40 p-4 backdrop-blur-sm"
+    >
       <form
         onSubmit={handleSubmit}
         className="my-auto w-full max-w-2xl rounded-[1.5rem] border bg-card p-5 shadow-2xl sm:p-6"
@@ -67,10 +74,20 @@ export function TaskForm({
       >
         <div className="mb-6 flex items-start justify-between gap-4">
           <div>
-            <h2 id={titleId} className="text-xl font-semibold">{task ? "Edit task" : "Create a new task"}</h2>
-            <p className="mt-1 text-sm text-muted-foreground">Add the details your team needs to complete this work.</p>
+            <h2 id={titleId} className="text-xl font-semibold">
+              {task ? "Edit task" : "Create a new task"}
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Add the details your team needs to complete this work.
+            </p>
           </div>
-          <Button type="button" variant="ghost" size="icon" aria-label="Close task form" onClick={onCancel}>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            aria-label="Close task form"
+            onClick={onCancel}
+          >
             <X className="size-4" />
           </Button>
         </div>
@@ -89,7 +106,9 @@ export function TaskForm({
               )}
               placeholder="What needs to be done?"
             />
-            {errors.title ? <span className="block text-xs text-destructive">{errors.title}</span> : null}
+            {errors.title ? (
+              <span className="block text-xs text-destructive">{errors.title}</span>
+            ) : null}
           </label>
 
           <label className="block space-y-2 text-sm font-medium">
@@ -153,15 +172,24 @@ export function TaskForm({
           </div>
         </div>
 
-        {apiError ? <p role="alert" className="mt-4 rounded-xl bg-red-50 p-3 text-sm text-red-700 dark:bg-red-950/30 dark:text-red-300">{apiError}</p> : null}
+        {apiError ? (
+          <p
+            role="alert"
+            className="mt-4 rounded-xl bg-red-50 p-3 text-sm text-red-700 dark:bg-red-950/30 dark:text-red-300"
+          >
+            {apiError}
+          </p>
+        ) : null}
 
         <div className="mt-6 flex justify-end gap-2">
-          <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>Cancel</Button>
+          <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
+            Cancel
+          </Button>
           <Button type="submit" className="bg-blue-600 hover:bg-blue-700" disabled={isSubmitting}>
             {isSubmitting ? "Saving…" : task ? "Save changes" : "Create task"}
           </Button>
         </div>
       </form>
-    </div>
+    </motion.div>
   )
 }

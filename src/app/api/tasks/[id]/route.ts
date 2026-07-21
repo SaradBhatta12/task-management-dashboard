@@ -12,8 +12,7 @@ function isTaskUpdate(value: unknown): value is TaskUpdate {
   const changes = value as Record<string, unknown>
 
   return !(
-    (changes.title !== undefined &&
-      (typeof changes.title !== "string" || !changes.title.trim())) ||
+    (changes.title !== undefined && (typeof changes.title !== "string" || !changes.title.trim())) ||
     (changes.description !== undefined && typeof changes.description !== "string") ||
     (changes.status !== undefined &&
       (typeof changes.status !== "string" ||
@@ -48,9 +47,7 @@ export async function PATCH(request: Request, context: TaskRouteContext) {
   const task = updateMockTask(id, {
     ...changes,
     ...(changes.title !== undefined ? { title: changes.title.trim() } : {}),
-    ...(changes.description !== undefined
-      ? { description: changes.description.trim() }
-      : {}),
+    ...(changes.description !== undefined ? { description: changes.description.trim() } : {}),
     updatedAt: new Date().toISOString(),
   })
 

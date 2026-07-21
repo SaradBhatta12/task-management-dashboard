@@ -9,14 +9,14 @@ function isTaskInput(value: unknown): value is TaskInput {
 
   return Boolean(
     typeof input.title === "string" &&
-      input.title.trim() &&
-      typeof input.description === "string" &&
-      typeof input.status === "string" &&
-      TASK_STATUSES.includes(input.status) &&
-      typeof input.priority === "string" &&
-      TASK_PRIORITIES.includes(input.priority) &&
-      typeof input.dueDate === "string" &&
-      !Number.isNaN(Date.parse(input.dueDate)),
+    input.title.trim() &&
+    typeof input.description === "string" &&
+    typeof input.status === "string" &&
+    TASK_STATUSES.includes(input.status) &&
+    typeof input.priority === "string" &&
+    TASK_PRIORITIES.includes(input.priority) &&
+    typeof input.dueDate === "string" &&
+    !Number.isNaN(Date.parse(input.dueDate)),
   )
 }
 

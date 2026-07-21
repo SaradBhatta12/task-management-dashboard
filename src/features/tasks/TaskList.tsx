@@ -1,5 +1,6 @@
 "use client"
 
+import { AnimatePresence } from "framer-motion"
 import { AlertCircle, Plus } from "lucide-react"
 import { useMemo, useState } from "react"
 
@@ -93,7 +94,9 @@ export function TaskList() {
       <div className="space-y-4">
         <LoadingSkeleton />
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {Array.from({ length: 6 }, (_, index) => <LoadingSkeleton key={index} />)}
+          {Array.from({ length: 6 }, (_, index) => (
+            <LoadingSkeleton key={index} />
+          ))}
         </div>
       </div>
     )
@@ -105,7 +108,9 @@ export function TaskList() {
         <AlertCircle className="mx-auto size-8 text-red-600" />
         <h2 className="mt-3 font-semibold">Unable to load tasks</h2>
         <p className="mt-1 text-sm text-muted-foreground">Check your connection and try again.</p>
-        <Button className="mt-4" variant="outline" onClick={() => refetch()}>Try again</Button>
+        <Button className="mt-4" variant="outline" onClick={() => refetch()}>
+          Try again
+        </Button>
       </div>
     )
   }
@@ -117,7 +122,10 @@ export function TaskList() {
           {visibleTasks.length} of {tasks.length} {tasks.length === 1 ? "task" : "tasks"}
           {isFetching ? " · Updating…" : ""}
         </p>
-        <Button onClick={openCreateForm} className="h-10 rounded-xl bg-blue-600 px-4 hover:bg-blue-700">
+        <Button
+          onClick={openCreateForm}
+          className="h-10 rounded-xl bg-blue-600 px-4 hover:bg-blue-700"
+        >
           <Plus className="size-4" />
           New task
         </Button>
@@ -126,44 +134,70 @@ export function TaskList() {
       <TaskFilters />
 
       {operationError ? (
-        <p role="alert" className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-950 dark:bg-red-950/30 dark:text-red-300">
+        <p
+          role="alert"
+          className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-950 dark:bg-red-950/30 dark:text-red-300"
+        >
           {operationError}
         </p>
       ) : null}
 
       {visibleTasks.length > 0 ? (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {visibleTasks.map((task) => (
-            <TaskCard key={task.id} task={task} onEdit={openEditForm} onDelete={setDeleteTarget} />
-          ))}
+          <AnimatePresence initial={false} mode="popLayout">
+            {visibleTasks.map((task) => (
+              <TaskCard
+                key={task.id}
+                task={task}
+                onEdit={openEditForm}
+                onDelete={setDeleteTarget}
+              />
+            ))}
+          </AnimatePresence>
         </div>
       ) : (
         <div className="space-y-3">
           <EmptyState
             title={tasks.length ? "No matching tasks" : "No tasks yet"}
-            description={tasks.length ? "Try changing or clearing your filters." : "Create your first task to get started."}
+            description={
+              tasks.length
+                ? "Try changing or clearing your filters."
+                : "Create your first task to get started."
+            }
           />
           {tasks.length ? (
-            <Button variant="ghost" className="mx-auto flex" onClick={() => dispatch(resetTaskFilters())}>Clear filters</Button>
+            <Button
+              variant="ghost"
+              className="mx-auto flex"
+              onClick={() => dispatch(resetTaskFilters())}
+            >
+              Clear filters
+            </Button>
           ) : null}
         </div>
       )}
 
-      {isFormOpen ? (
-        <TaskForm
-          key={editingTask?.id ?? "new-task"}
-          task={editingTask}
-          isSubmitting={isCreating || isUpdating}
-          apiError={operationError}
-          onSubmit={saveTask}
-          onCancel={() => setIsFormOpen(false)}
-        />
-      ) : null}
+      <AnimatePresence>
+        {isFormOpen ? (
+          <TaskForm
+            key={editingTask?.id ?? "new-task"}
+            task={editingTask}
+            isSubmitting={isCreating || isUpdating}
+            apiError={operationError}
+            onSubmit={saveTask}
+            onCancel={() => setIsFormOpen(false)}
+          />
+        ) : null}
+      </AnimatePresence>
 
       <ConfirmDialog
         open={Boolean(deleteTarget)}
         title="Delete this task?"
-        description={deleteTarget ? `“${deleteTarget.title}” will be permanently removed. This action cannot be undone.` : undefined}
+        description={
+          deleteTarget
+            ? `“${deleteTarget.title}” will be permanently removed. This action cannot be undone.`
+            : undefined
+        }
         confirmLabel="Delete task"
         isConfirming={isDeleting}
         onCancel={() => setDeleteTarget(null)}

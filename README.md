@@ -1,36 +1,107 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Taskflow
 
-## Getting Started
+Taskflow is a responsive task management dashboard built with Next.js App Router and TypeScript. It includes mock authentication, persisted user state and filters, a local REST API, complete task CRUD, dashboard summaries, theme support, and accessible loading, error, empty, modal, and confirmation states.
 
-First, run the development server:
+## Installation
+
+Requirements:
+
+- Node.js 20 or newer
+- npm 10 or newer
+
+Install dependencies and start the development server:
+
+```bash
+npm install
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+The login is intentionally mocked. Use any valid email address and any password containing at least six characters.
+
+```text
+Email: alex@example.com
+Password: 123456
+```
+
+Available scripts:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run build
+npm run start
+npm run lint
+npm run format
+npm run format:check
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Environment Variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+No environment variables are required. By default, RTK Query uses the included Next.js Route Handlers under `/api`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+To use a compatible external API instead, create `.env.local`:
 
-## Learn More
+```bash
+NEXT_PUBLIC_API_BASE_URL=https://example.com/api
+```
 
-To learn more about Next.js, take a look at the following resources:
+The external API must expose compatible `/tasks` and `/tasks/:id` endpoints.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```text
+src/
+├── app/                  Next.js routes, layouts, and mock API handlers
+├── components/
+│   ├── common/           Reusable feedback and dialog components
+│   ├── layout/           Navbar, sidebar, theme toggle, transitions
+│   └── ui/               shadcn UI primitives
+├── features/
+│   ├── auth/             Authentication state and login flow
+│   ├── dashboard/        Live task summaries and progress views
+│   ├── tasks/            CRUD, filters, task cards, and RTK Query API
+│   └── ui/               Shared interface state
+├── lib/                  Providers, mock data, and validation
+├── store/                Redux store, reducer, and typed hooks
+├── types/                Domain types
+├── constants/            Shared constants
+└── utils/                Shared utilities
+```
 
-## Deploy on Vercel
+## Libraries Used
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Next.js 16 App Router and React 19
+- TypeScript
+- Tailwind CSS 4
+- shadcn/ui and Base UI
+- Redux Toolkit and React Redux
+- RTK Query
+- Redux Persist
+- Framer Motion
+- Lucide React
+- ESLint and Prettier
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The theme implementation is intentionally local and persists the selected light or dark mode in browser storage.
+
+## Architecture Notes
+
+The App Router remains server-first. Interactive areas are isolated behind client boundaries, including Redux providers, authentication guards, task workflows, filters, navigation state, and animations.
+
+Redux Toolkit owns authentication, filter, selected-task, and UI state. Redux Persist stores authentication, filters, and the desktop sidebar preference. RTK Query owns server data and request state; its API cache is intentionally excluded from persistence.
+
+The included Route Handlers provide `GET`, `POST`, `PATCH`, and `DELETE` endpoints. RTK Query cache tags keep task lists and detail views synchronized after mutations.
+
+## Assumptions
+
+- Authentication is deliberately mocked and accepts any valid email with a six-character password.
+- Task filtering and due-date sorting happen client-side because the included dataset is small.
+- Dates are stored as ISO date strings and displayed consistently in UTC.
+- The browser supports the modern baseline targeted by Next.js 16.
+
+## Known Limitations
+
+- Mock task data is stored in server memory and resets when the development server restarts.
+- Authentication tokens are mock values and must not be used as a production security model.
+- The notification, profile, and help controls are visual placeholders.
+- Automated unit and end-to-end tests are not included in the one-day scope.

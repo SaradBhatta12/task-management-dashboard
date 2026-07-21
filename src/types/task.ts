@@ -12,9 +12,6 @@ export type Task = {
   updatedAt: string
 }
 
-export type TaskInput = Pick<
-  Task,
-  "title" | "description" | "status" | "priority" | "dueDate"
->
+export type TaskInput = Pick<Task, "title" | "description" | "status" | "priority" | "dueDate">
 
 export type TaskUpdate = Partial<TaskInput>

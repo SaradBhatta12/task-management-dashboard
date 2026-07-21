@@ -1,5 +1,6 @@
 "use client"
 
+import { motion, useReducedMotion } from "framer-motion"
 import { CalendarDays, ChevronRight, Pencil, Trash2 } from "lucide-react"
 import Link from "next/link"
 
@@ -35,6 +36,7 @@ type TaskCardProps = {
 
 export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
   const dispatch = useAppDispatch()
+  const reduceMotion = useReducedMotion()
   const dueDate = new Intl.DateTimeFormat("en", {
     month: "short",
     day: "numeric",
@@ -43,22 +45,53 @@ export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
   }).format(new Date(`${task.dueDate}T00:00:00Z`))
 
   return (
-    <article className="group flex min-h-60 flex-col rounded-2xl border bg-card p-5 transition hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-lg hover:shadow-blue-950/5 dark:hover:border-blue-900">
+    <motion.article
+      layout
+      initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={reduceMotion ? undefined : { opacity: 0, scale: 0.97 }}
+      whileHover={reduceMotion ? undefined : { y: -2 }}
+      transition={{ duration: 0.18, ease: "easeOut" }}
+      className="group flex min-h-60 flex-col rounded-2xl border bg-card p-5 transition-colors hover:border-blue-200 hover:shadow-lg hover:shadow-blue-950/5 dark:hover:border-blue-900"
+    >
       <div className="flex items-start justify-between gap-3">
         <div className="flex flex-wrap gap-2">
-          <span className={cn("rounded-full px-2.5 py-1 text-xs font-medium", statusStyles[task.status])}>
+          <span
+            className={cn(
+              "rounded-full px-2.5 py-1 text-xs font-medium",
+              statusStyles[task.status],
+            )}
+          >
             {statusLabels[task.status]}
           </span>
-          <span className={cn("rounded-full px-2.5 py-1 text-xs font-medium capitalize", priorityStyles[task.priority])}>
+          <span
+            className={cn(
+              "rounded-full px-2.5 py-1 text-xs font-medium capitalize",
+              priorityStyles[task.priority],
+            )}
+          >
             {task.priority}
           </span>
         </div>
 
         <div className="flex opacity-100 transition sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
-          <Button type="button" variant="ghost" size="icon-sm" aria-label={`Edit ${task.title}`} onClick={() => onEdit(task)}>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            aria-label={`Edit ${task.title}`}
+            onClick={() => onEdit(task)}
+          >
             <Pencil className="size-3.5" />
           </Button>
-          <Button type="button" variant="ghost" size="icon-sm" aria-label={`Delete ${task.title}`} onClick={() => onDelete(task)} className="hover:text-red-600">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            aria-label={`Delete ${task.title}`}
+            onClick={() => onDelete(task)}
+            className="hover:text-red-600"
+          >
             <Trash2 className="size-3.5" />
           </Button>
         </div>
@@ -85,6 +118,6 @@ export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
           <ChevronRight className="size-3.5" />
         </Link>
       </div>
-    </article>
+    </motion.article>
   )
 }
