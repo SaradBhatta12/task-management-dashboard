@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState, type FormEvent } from "react"
 
 import { Button } from "@/components/ui/button"
+import { DEMO_AUTH_TOKEN, DEMO_CREDENTIALS } from "@/constants"
 import { setCredentials } from "@/features/auth/authSlice"
 import { validateLogin, type LoginErrors, type LoginInput } from "@/lib/validations/loginSchema"
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
@@ -18,7 +19,10 @@ const initialValues: LoginInput = {
 export function LoginForm() {
   const router = useRouter()
   const dispatch = useAppDispatch()
-  const isAuthenticated = useAppSelector((state) => Boolean(state.auth.token))
+  const isAuthenticated = useAppSelector(
+    (state) =>
+      state.auth.token === DEMO_AUTH_TOKEN && state.auth.user?.email === DEMO_CREDENTIALS.email,
+  )
   const [values, setValues] = useState(initialValues)
   const [errors, setErrors] = useState<LoginErrors>({})
   const [showPassword, setShowPassword] = useState(false)
@@ -59,7 +63,7 @@ export function LoginForm() {
           name: displayName || "Taskflow User",
           email: values.email,
         },
-        token: `mock-token-${Date.now()}`,
+        token: DEMO_AUTH_TOKEN,
       }),
     )
 
@@ -77,8 +81,21 @@ export function LoginForm() {
           <LockKeyhole className="size-5" />
         </span>
         <h1 className="text-2xl font-bold tracking-tight">Welcome to Taskflow</h1>
-        <p className="text-sm text-muted-foreground">
-          Use any valid email and a 6-character password.
+        <p className="text-sm text-muted-foreground">Use the demo account credentials below.</p>
+      </div>
+
+      <div className="rounded-xl border border-blue-100 bg-blue-50/60 px-4 py-3 text-xs dark:border-blue-950 dark:bg-blue-950/20">
+        <p className="flex items-center justify-between gap-4">
+          <span className="text-muted-foreground">Email</span>
+          <span className="font-semibold text-blue-700 dark:text-blue-300">
+            {DEMO_CREDENTIALS.email}
+          </span>
+        </p>
+        <p className="mt-2 flex items-center justify-between gap-4">
+          <span className="text-muted-foreground">Password</span>
+          <span className="font-semibold text-blue-700 dark:text-blue-300">
+            {DEMO_CREDENTIALS.password}
+          </span>
         </p>
       </div>
 

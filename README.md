@@ -39,7 +39,7 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ### Demo Login
 
-Authentication is intentionally mocked. Any valid email and any password containing at least six characters will work.
+Authentication is intentionally mocked and only the following demo account is accepted.
 
 ```text
 Email: alex@example.com
@@ -88,7 +88,7 @@ The external service must support the same `/tasks` and `/tasks/:id` contract do
 
 ### Mock Authentication
 
-- Validates email format and a minimum six-character password.
+- Accepts only the documented `alex@example.com` and `123456` demo credentials.
 - Creates a mock user and token in the Redux auth slice.
 - Protects dashboard routes with a client authentication guard.
 - Redirects authenticated users away from the login page.
@@ -260,7 +260,7 @@ Later commits contain requested visual refinements to the task detail page and a
 
 ## Assumptions
 
-- Mock authentication is sufficient; no real identity provider is required.
+- Mock authentication is sufficient, using one fixed demo account rather than a real identity provider.
 - Client-side filtering is appropriate for the small assignment dataset.
 - ISO date strings are displayed in UTC for consistent server and client output.
 - The browser meets the modern baseline supported by Next.js 16.
